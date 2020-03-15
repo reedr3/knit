@@ -20,9 +20,9 @@ export default class Main extends Component {
         return (
             <View style={styles.container}>
                 <Text>Let's knit some shit</Text>
-                <Gestures>
+                <Gestures rotatable={false}>
                     <View style={{ height: 600, width: 600, flexDirection: 'column' }}>
-                        <View style={{ flex: 1, flexDirection: 'row', width: 800 }}>
+                        <View style={{ flex: 1, flexDirection: 'row' }}>
                             <TouchableOpacity style={{ flex: 1, margin: 2, borderColor: 'black', borderStyle: 'solid', borderWidth: 5, backgroundColor: this.state.cellColors[0] }} onPress={() => this.toggleCellColor(0)} />
                             <TouchableOpacity style={{ flex: 1, margin: 2, borderColor: 'black', borderStyle: 'solid', borderWidth: 5, backgroundColor: this.state.cellColors[1] }} onPress={() => this.toggleCellColor(1)} />
                             <TouchableOpacity style={{ flex: 1, margin: 2, borderColor: 'black', borderStyle: 'solid', borderWidth: 5, backgroundColor: this.state.cellColors[2] }} onPress={() => this.toggleCellColor(2)} />
