@@ -18,8 +18,6 @@ export default class Main extends Component {
     }
 
     setInitialCellStitchImages() {
-        console.log(this.state.gridWidth)
-        console.log(this.state.gridHeight)
         let initialCellStitchImages = []
         let totalNumberOfCells = this.state.gridHeight * this.state.gridWidth
         let defaultStitchImage = this.stitchImages["knit"]
@@ -51,6 +49,7 @@ export default class Main extends Component {
                 <TouchableOpacity 
                     style={styles.cell} 
                     onPress={() => this.markStitchInCell(cellIndexInTotalGrid)}
+                    key={cellIndexInTotalGrid}
                 >
                     <Image source={this.state.cellStitchImages[cellIndexInTotalGrid]} style={styles.stitchImage}/>
                 </TouchableOpacity>
@@ -78,22 +77,24 @@ export default class Main extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Gestures 
-                    rotatable={false}
-                    draggable={{
-                        x: true,
-                        y: false,
-                    }}
-                    scalable={{
-                        min: .5,
-                        max: 3,
-                    }}
-                >
-                    {this.getRowsInGrid()}
-                </Gestures>
-                <Input label="Width:" placeholder="0" onChangeText={(text) => this.setState({gridWidth: text})}></Input>
+                <View style={styles.gesturesContainer}>
+                    <Gestures
+                        rotatable={false}
+                        draggable={{
+                            x: true,
+                            y: true,
+                        }}
+                        scalable={{
+                            min: .5,
+                            max: 3,
+                        }}
+                    >
+                        {this.getRowsInGrid()}
+                    </Gestures>
+                </View>
+                {/* <Input label="Width:" placeholder="0" onChangeText={(text) => this.setState({gridWidth: text})}></Input>
                 <Input label="Height:" placeholder="0" onChangeText={(text) => this.setState({gridHeight: text})}></Input>
-                <Button title="Done" onPress={() => this.setInitialCellStitchImages()}></Button>
+                <Button title="Done" onPress={() => this.setInitialCellStitchImages()}></Button> */}
                 <View style={styles.stitchSelectionBar}>
                     <Text style={{fontWeight: "bold", textAlignVertical: "top", marginTop: 20}}>Select stitch to add: </Text>
                     <Button 
@@ -129,12 +130,25 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+        borderWidth: 4,
+        borderColor: "red"
+    },
+
+    gesturesContainer: {
+        flex: 3,
+        borderWidth: 4,
+        borderColor: "green",
+        width: "100%",
+        marginTop: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: "hidden"
     },
 
     grid: { 
         height: 300, 
         width: 300, 
-        flexDirection: 'column' 
+        flexDirection: 'column'
     },
 
     row: { 
@@ -160,6 +174,10 @@ const styles = StyleSheet.create({
     stitchSelectionBar: {
         flex: 1, 
         flexDirection: 'row',
-        margin: 5
+        margin: 5,
+        borderWidth: 4,
+        borderColor: "purple",
+        width: "100%",
+        justifyContent: 'center',
     }
 });
