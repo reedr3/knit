@@ -1,20 +1,38 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Button, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import Gestures from 'react-native-easy-gestures';
+import { Input, Button } from 'react-native-elements';
 
 export default class Main extends Component {
 
-    purlImg = require('./assets/purl.png')
-    knitImg = require('./assets/knit.png')
-
-    state = {
-        cellStitchImages: [this.knitImg, this.knitImg, this.knitImg, this.knitImg, this.knitImg, this.knitImg, this.knitImg, this.knitImg, this.knitImg],
-        currentStitch: "knit"
+    stitchImages = {
+        "knit": require('./assets/knit.png'), 
+        "purl": require('./assets/purl.png')
     }
 
-    placeStitchInCell(cellIndex: number) {
+    state = {
+        cellStitchImages: [],
+        currentlySelectedMarkingStitch: "knit",
+        gridWidth: 3,
+        gridHeight: 3
+    }
+
+    setInitialCellStitchImages() {
+        console.log(this.state.gridWidth)
+        console.log(this.state.gridHeight)
+        let initialCellStitchImages = []
+        let totalNumberOfCells = this.state.gridHeight * this.state.gridWidth
+        let defaultStitchImage = this.stitchImages["knit"]
+        for(let i = 0; i < (totalNumberOfCells); i++) {
+            initialCellStitchImages.push(defaultStitchImage)
+        }
+        this.setState({cellStitchImages: initialCellStitchImages})
+    }
+
+    markStitchInCell(cellIndex: number) {
         let newCellStitchImages = this.state.cellStitchImages
-        newCellStitchImages[cellIndex] = (this.state.currentStitch == 'knit' ? this.knitImg : this.purlImg)
+        let newImageForTappedCell = this.stitchImages[this.state.currentlySelectedMarkingStitch]
+        newCellStitchImages[cellIndex] = newImageForTappedCell
         
         this.setState({
             cellStitches: newCellStitchImages
@@ -22,72 +40,83 @@ export default class Main extends Component {
     }
 
     setCurrentStitch(stitchName: string) {
-        this.setState({currentStitch: stitchName})
+        this.setState({currentlySelectedMarkingStitch: stitchName})
+    }
+
+    getCellsInRow(rowNumber: number) {
+        let cellsInRow = []
+        for(let i = 0; i < this.state.gridWidth; i++) {
+            let cellIndexInTotalGrid = (rowNumber * this.state.gridWidth) + i
+            cellsInRow.push(
+                <TouchableOpacity 
+                    style={styles.cell} 
+                    onPress={() => this.markStitchInCell(cellIndexInTotalGrid)}
+                >
+                    <Image source={this.state.cellStitchImages[cellIndexInTotalGrid]} style={styles.stitchImage}/>
+                </TouchableOpacity>
+            )
+        }
+        return(
+            <View style={styles.row}>
+                {cellsInRow}
+            </View>
+        )
+    }
+
+    getRowsInGrid() {
+        let rowsInGrid = []
+        for(let i = 0; i < this.state.gridHeight; i++) {
+            rowsInGrid.push(this.getCellsInRow(i))
+        }
+        return(
+            <View style={styles.grid}>
+                {rowsInGrid}
+            </View>
+        )
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <Text>Let's knit some shit</Text>
-                <Gestures rotatable={false}>
-                    <View style={{ height: 600, width: 600, flexDirection: 'column' }}>
-                        <View style={{ flex: 1, flexDirection: 'row'}}>
-                            <TouchableOpacity 
-                            style={{ flex: 1, margin: 2, borderColor: 'black', borderStyle: 'solid', borderWidth: 5, backgroundColor: 'white'}} 
-                            onPress={() => this.placeStitchInCell(0)}>
-                                <Image source={this.state.cellStitchImages[0]} style={{resizeMode: "contain", width: '100%', height: '100%', zIndex: 10}}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                            style={{ flex: 1, margin: 2, borderColor: 'black', borderStyle: 'solid', borderWidth: 5, backgroundColor: 'white' }} 
-                            onPress={() => this.placeStitchInCell(1)}>
-                                <Image source={this.state.cellStitchImages[1]} style={{resizeMode: "contain", width: '100%', height: '100%', zIndex: 10}}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                            style={{ flex: 1, margin: 2, borderColor: 'black', borderStyle: 'solid', borderWidth: 5, backgroundColor: 'white' }} 
-                            onPress={() => this.placeStitchInCell(2)}>
-                                <Image source={this.state.cellStitchImages[2]} style={{resizeMode: "contain", width: '100%', height: '100%', zIndex: 10}}/>
-                            </TouchableOpacity>
-                        </View>
-
-                        <View style={{ flex: 1, flexDirection: 'row' }}>
-                            <TouchableOpacity 
-                            style={{ flex: 1, margin: 2, borderColor: 'black', borderStyle: 'solid', borderWidth: 5, backgroundColor: 'white' }} 
-                            onPress={() => this.placeStitchInCell(3)}>
-                                <Image source={this.state.cellStitchImages[3]} style={{resizeMode: "contain", width: '100%', height: '100%', zIndex: 10}}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                            style={{ flex: 1, margin: 2, borderColor: 'black', borderStyle: 'solid', borderWidth: 5, backgroundColor: 'white' }} 
-                            onPress={() => this.placeStitchInCell(4)}>
-                                <Image source={this.state.cellStitchImages[4]} style={{resizeMode: "contain", width: '100%', height: '100%', zIndex: 10}}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                            style={{ flex: 1, margin: 2, borderColor: 'black', borderStyle: 'solid', borderWidth: 5, backgroundColor: 'white' }} 
-                            onPress={() => this.placeStitchInCell(5)}>
-                                <Image source={this.state.cellStitchImages[5]} style={{resizeMode: "contain", width: '100%', height: '100%', zIndex: 10}}/>
-                            </TouchableOpacity>
-                        </View>
-
-                        <View style={{ flex: 1, flexDirection: 'row' }}>
-                            <TouchableOpacity 
-                            style={{ flex: 1, margin: 2, borderColor: 'black', borderStyle: 'solid', borderWidth: 5, backgroundColor: 'white' }} 
-                            onPress={() => this.placeStitchInCell(6)}>
-                                <Image source={this.state.cellStitchImages[6]} style={{resizeMode: "contain", width: '100%', height: '100%', zIndex: 10}}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                            style={{ flex: 1, margin: 2, borderColor: 'black', borderStyle: 'solid', borderWidth: 5, backgroundColor: 'white' }} 
-                            onPress={() => this.placeStitchInCell(7)}>
-                                <Image source={this.state.cellStitchImages[7]} style={{resizeMode: "contain", width: '100%', height: '100%', zIndex: 10}}/>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                            style={{ flex: 1, margin: 2, borderColor: 'black', borderStyle: 'solid', borderWidth: 5, backgroundColor: 'white' }} 
-                            onPress={() => this.placeStitchInCell(8)}>
-                                <Image source={this.state.cellStitchImages[8]} style={{resizeMode: "contain", width: '100%', height: '100%', zIndex: 10}}/>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+                <Gestures 
+                    rotatable={false}
+                    draggable={{
+                        x: true,
+                        y: false,
+                    }}
+                    scalable={{
+                        min: .5,
+                        max: 3,
+                    }}
+                >
+                    {this.getRowsInGrid()}
                 </Gestures>
-                <Button title="Knit stitch" color={this.state.currentStitch == 'knit' ? 'blue' : 'grey'} onPress={() => this.setCurrentStitch("knit")}/>
-                <Button title="Purl stitch" color={this.state.currentStitch == 'purl' ? 'blue' : 'grey'} onPress={() => this.setCurrentStitch("purl")}/>
+                <Input label="Width:" placeholder="0" onChangeText={(text) => this.setState({gridWidth: text})}></Input>
+                <Input label="Height:" placeholder="0" onChangeText={(text) => this.setState({gridHeight: text})}></Input>
+                <Button title="Done" onPress={() => this.setInitialCellStitchImages()}></Button>
+                <View style={styles.stitchSelectionBar}>
+                    <Text style={{fontWeight: "bold", textAlignVertical: "top", marginTop: 20}}>Select stitch to add: </Text>
+                    <Button 
+                        title="Knit" 
+                        buttonStyle={{
+                            borderWidth: 4,
+                            borderColor: this.state.currentlySelectedMarkingStitch == 'knit' ? 'blue' : 'grey',
+                            backgroundColor: 'grey',
+                            margin: 5
+                        }}
+                        onPress={() => this.setCurrentStitch("knit")}
+                    />
+                    <Button 
+                        title="Purl" 
+                        buttonStyle={{
+                            borderWidth: 4,
+                            borderColor: this.state.currentlySelectedMarkingStitch == 'purl' ? 'blue' : 'grey',
+                            backgroundColor: 'grey',
+                            margin: 5
+                        }}
+                        onPress={() => this.setCurrentStitch("purl")}
+                    />
+                </View>
             </View>
         );
     }
@@ -101,4 +130,36 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+
+    grid: { 
+        height: 300, 
+        width: 300, 
+        flexDirection: 'column' 
+    },
+
+    row: { 
+        flex: 1, 
+        flexDirection: 'row'
+    },
+
+    cell: { 
+        flex: 1, 
+        borderColor: 'black', 
+        borderStyle: 'solid', 
+        borderWidth: 2, 
+        backgroundColor: 'white'
+    },
+
+    stitchImage: {
+        resizeMode: "contain", 
+        width: '100%', 
+        height: '100%', 
+        zIndex: 10
+    },
+
+    stitchSelectionBar: {
+        flex: 1, 
+        flexDirection: 'row',
+        margin: 5
+    }
 });
